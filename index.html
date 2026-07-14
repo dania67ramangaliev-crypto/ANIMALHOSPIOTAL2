@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ACCESS</title>
+<style>
+body{
+background:black;
+color:white;
+font-family:Courier New;
+text-align:center;
+margin-top:15%;
+}
+input,button{
+background:black;
+color:white;
+border:1px solid white;
+padding:10px;
+}
+button:hover{
+background:white;
+color:black;
+}
+</style>
+</head>
+<body>
+
+<h1>ENTER PASSWORD</h1>
+<input type="password" id="pass">
+<button onclick="check()">ENTER</button>
+<p id="msg"></p>
+
+<div id="content" style="display:none;">
+<h2>ACCESS GRANTED</h2>
+<textarea readonly style="width:80%;height:60px;">
+loadstring(game:HttpGet("ТВОЯ_ССЫЛКА_СЮДА"))()
+</textarea>
+</div>
+
+<script>
+function check(){
+if(document.getElementById("pass").value=="0492"){
+document.getElementById("content").style.display="block";
+document.getElementById("msg").innerHTML="";
+}else{
+document.getElementById("msg").innerHTML="ACCESS DENIED";
+}
+}
+</script>
+
+</body>
+</html>
