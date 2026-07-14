@@ -2,39 +2,73 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>ACCESS</title>
+<title>COBALT TERMINAL</title>
+
+<!-- Шрифт Arimo -->
+<link href="https://fonts.googleapis.com/css2?family=Arimo&display=swap" rel="stylesheet">
+
 <style>
 body{
-background:black;
-color:white;
-font-family:Courier New;
+background:#000;
+color:#fff;
+font-family:'Arimo', Arial, sans-serif;
 text-align:center;
 margin-top:15%;
 }
-input,button{
-background:black;
-color:white;
-border:1px solid white;
-padding:10px;
+
+h1{
+letter-spacing:4px;
+font-weight:normal;
 }
+
+input,button,textarea{
+background:#000;
+color:#fff;
+border:1px solid #fff;
+padding:10px;
+font-family:'Arimo', Arial, sans-serif;
+}
+
+button{
+cursor:pointer;
+}
+
 button:hover{
-background:white;
-color:black;
+background:#fff;
+color:#000;
+}
+
+textarea{
+width:80%;
+height:60px;
+resize:none;
+margin-top:10px;
+}
+
+#content{
+display:none;
+margin-top:20px;
 }
 </style>
 </head>
 <body>
 
-<h1>ENTER PASSWORD</h1>
+<h1>COBALT ACCESS</h1>
+
+<p>ENTER PASSWORD</p>
 <input type="password" id="pass">
+<br><br>
 <button onclick="check()">ENTER</button>
+
 <p id="msg"></p>
 
-<div id="content" style="display:none;">
+<div id="content">
 <h2>ACCESS GRANTED</h2>
-<textarea readonly style="width:80%;height:60px;">
-loadstring(game:HttpGet("ТВОЯ_ССЫЛКА_СЮДА"))()
+
+<textarea readonly onclick="this.select()">
+loadstring(game:HttpGet("https://github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau"))()
 </textarea>
+
 </div>
 
 <script>
