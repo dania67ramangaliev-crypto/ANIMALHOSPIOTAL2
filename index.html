@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Казахские слова</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .word-btn {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            padding: 18px 36px;
+            font-size: 28px;
+            font-weight: bold;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,122,255,0.3);
+            transition: transform 0.1s;
+        }
+        .word-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Нажми на слово:</h1>
+        <button class="word-btn" onclick="speakKazakh()">тамақ 🔊</button>
+    </div>
+
+    <script>
+        function speakKazakh() {
+            // Используем публичный движок Google TTS для надежной озвучки на казахском
+            let audioUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&q=%D1%82%D0%B0%D0%BC%D0%B0%D2%9B&tl=kk&client=tw-ob';
+            let audio = new Audio(audioUrl);
+            audio.play().catch(error => {
+                alert('Не удалось воспроизвести звук');
+            });
+        }
+    </script>
+
+</body>
+</html>
