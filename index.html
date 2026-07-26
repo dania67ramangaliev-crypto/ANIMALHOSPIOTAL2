@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер Казахского Языка</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #131f24;
+            color: #ffffff;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .quiz-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 24px;
+            max-width: 700px;
+            margin: 0 auto;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .progress-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #52656d;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            height: 14px;
+            background-color: #202f36;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 1%;
+            height: 100%;
+            background-color: #1cb0f6;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: #1cb0f6;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        .open-menu-btn {
+            background-color: #202f36;
+            border: 2px solid #37464f;
+            color: #1cb0f6;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background-color: rgba(28, 176, 246, 0.15);
+            color: #1cb0f6;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .question-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        .rule-card {
+            background-color: rgba(255, 200, 0, 0.08);
+            border: 2px solid #ffc800;
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .rule-icon { font-size: 18px; }
+
+        .rule-text {
+            color: #ffe885;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .phrase-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            align-items: baseline;
+        }
+
+        .interactive-word {
+            position: relative;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1cb0f6;
+            border-bottom: 2px dashed #1cb0f6;
+            cursor: pointer;
+            padding-bottom: 2px;
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1cb0f6;
+            color: #ffffff;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            z-index: 20;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1cb0f6 transparent transparent transparent;
+        }
+
+        .answer-area {
+            min-height: 60px;
+            border-top: 2px solid #37464f;
+            border-bottom: 2px solid #37464f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .word-bank {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .chip {
+            background-color: #18252b;
+            border: 2px solid #37464f;
+            border-bottom: 4px solid #37464f;
+            color: #ffffff;
+            padding: 10px 16px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .chip:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .chip.used {
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .quiz-footer {
+            border-top: 2px solid #37464f;
+            padding-top: 15px;
+        }
+
+        .check-btn {
+            width: 100%;
+            background-color: #1cb0f6;
+            color: #ffffff;
+            border: none;
+            border-bottom: 4px solid #147db0;
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .check-btn:disabled {
+            background-color: #37464f;
+            border-bottom-color: #202f36;
+            color: #afbbbc;
+            cursor: not-allowed;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -340px;
+            width: 320px;
+            height: 100%;
+            background-color: #18252b;
+            border-left: 2px solid #37464f;
+            display: flex;
+            flex-direction: column;
+            padding: 18px;
+            transition: right 0.3s ease;
+            z-index: 100;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+        }
+
+        .side-menu.open {
+            right: 0;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .menu-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .close-menu-btn {
+            background: none;
+            border: none;
+            color: #afbbbc;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .menu-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+            background-color: #202f36;
+            padding: 4px;
+            border-radius: 10px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #afbbbc;
+            padding: 8px 4px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .nav-btn.active {
+            background-color: #1cb0f6;
+            color: #ffffff;
+        }
+
+        .menu-tab {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .menu-tab.active {
+            display: flex;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            background-color: #202f36;
+            border: 2px solid #37464f;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #1cb0f6;
+        }
+
+        .dict-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dict-item {
+            background-color: #202f36;
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #37464f;
+        }
+
+        .dict-kk { font-weight: 700; color: #1cb0f6; font-size: 15px; }
+        .dict-ru { color: #afbbbc; font-size: 13px; }
+
+        .info-card {
+            background-color: #202f36;
+            border: 1px solid #37464f;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .info-card-header {
+            font-weight: 800;
+            color: #1cb0f6;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .info-card-body {
+            color: #e5e5e5;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: rgba(28, 176, 246, 0.15);
+            color: #1cb0f6;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .choice-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .choice-option {
+            background-color: #18252b;
+            border: 2px solid #37464f;
+            color: #ffffff;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .choice-option.selected {
+            border-color: #1cb0f6;
+            background-color: rgba(28, 176, 246, 0.12);
+        }
+
+        .choice-option.correct {
+            border-color: #58cc02;
+            background-color: rgba(88, 204, 2, 0.15);
+        }
+
+        .choice-option.wrong {
+            border-color: #ff4b4b;
+            background-color: rgba(255, 75, 75, 0.15);
+        }
+
+        .flashcard {
+            background-color: #18252b;
+            border: 2px solid #37464f;
+            border-radius: 16px;
+            min-height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 26px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+
+        .flashcard .fc-hint {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #52656d;
+            margin-top: 10px;
+        }
+
+        .flashcard.flipped {
+            border-color: #1cb0f6;
+            color: #1cb0f6;
+        }
+
+        .method-badge {
+            display: inline-block;
+            background-color: rgba(88, 204, 2, 0.15);
+            color: #58cc02;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 10px;
+            margin-left: 6px;
+        }
+
+        @media (max-width: 600px) {
+            .side-menu {
+                width: 85%;
+                right: -90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <main class="quiz-section">
+        <div class="progress-header">
+            <button class="close-btn" onclick="resetProgress()">✕</button>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <span class="progress-text" id="levelIndicator">1 / 100</span>
+            <button class="open-menu-btn" onclick="toggleMenu(true)">
+                <span>📖</span>
+                <span>Меню</span>
+            </button>
+        </div>
+
+        <div class="question-box">
+            <span class="topic-badge" id="topicBadge">Тема</span><span class="method-badge" id="methodBadge">Метод</span>
+            <h2 class="question-title" id="questionTitle">Переведите эту фразу:</h2>
+
+            <div class="rule-card">
+                <span class="rule-icon">💡</span>
+                <div class="rule-text" id="ruleText">
+                    Загрузка правила...
+                </div>
+            </div>
+
+            <div id="exerciseArea"></div>
+        </div>
+
+        <div class="quiz-footer">
+            <button class="check-btn" id="checkBtn" onclick="checkAnswer()" disabled>ПРОВЕРИТЬ</button>
+        </div>
+    </main>
+
+    <aside class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <span class="menu-title">Справочник и Словарь</span>
+            <button class="close-menu-btn" onclick="toggleMenu(false)">✕</button>
+        </div>
+
+        <div class="menu-nav">
+            <button class="nav-btn active" onclick="switchTab('dict')">Словарик</button>
+            <button class="nav-btn" onclick="switchTab('questions')">Вопросы</button>
+            <button class="nav-btn" onclick="switchTab('grammar')">Формы</button>
+        </div>
+
+        <div class="menu-tab active" id="tab-dict">
+            <input type="text" class="search-box" id="dictSearch" placeholder="Поиск слова..." oninput="filterDict()">
+            <div class="dict-list" id="dictList"></div>
+        </div>
+
+        <div class="menu-tab" id="tab-questions">
+            <div class="info-card">
+                <div class="info-card-header">кім? (кто?)</div>
+                <div class="info-card-body">Используется только для людей.<br><i>Пример: Сенің атың кім? (Как тебя зовут?)</i></div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-header">не? / неше? (что? / сколько?)</div>
+                <div class="info-card-body">Для предметов, животных и неодушевленных вещей.<br><span class="tag">нешеде?</span> — во сколько?</div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-header">қайда? / қайда орналасқан?</div>
+                <div class="info-card-body">Обозначает местоположение (где? / где находится?).</div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-header">қандай? (какой?)</div>
+                <div class="info-card-body">Вопрос к свойствам и качествам предметов.</div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-header">неше жаста? (сколько лет?)</div>
+                <div class="info-card-body">Вопрос о возрасте.<br><i>Пример: Саған неше жас? — Сколько тебе лет?</i></div>
+            </div>
+        </div>
+
+        <div class="menu-tab" id="tab-grammar">
+            <div class="info-card">
+                <div class="info-card-header">Вопросительные окончания (-ма/-ме, -ба/-бе)</div>
+                <div class="info-card-body">Добавляются в конце предложения, если нет вопросительного слова:<br><i>Бұл кітап па? (Это книга?)</i></div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-header">Притяжательные формы (Мой/Твой)</div>
+                <div class="info-card-body">
+                    • <b>Менің ...-м / -ым</b> (Мой)<br>
+                    • <b>Сенің ...-ң / -ың</b> (Твой)
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-header">Порядок слов</div>
+                <div class="info-card-body">Глагол (действие) в казахском языке почти всегда стоит в самом конце предложения.</div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-header">Личные окончания глаголов</div>
+                <div class="info-card-body">
+                    • <b>-мын/-мін</b> — я (после гласных/сонорных)<br>
+                    • <b>-сың/-сің</b> — ты<br>
+                    • <b>-мыз/-міз</b> — мы
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<script>
+    /* ===================== Генератор уроков A0-A1 (50 тем × 3 фразы) ===================== */
+
+    // Шаблоны предложений: каждый принимает казахское/русское слово и строит фразу
+    const TEMPLATES = {
+        eto:        { ru: w => `Это ${w}`,                 kz: w => `Бұл ${w}`,                 dict: { "Это": "Бұл" } },
+        eto_kolik:  { ru: w => `Это ${w} машина`,           kz: w => `Бұл ${w} көлік`,           dict: { "Это": "Бұл", "машина": "көлік" } },
+        moya:       { ru: w => `Это моя ${w}`,              kz: w => `Бұл менің ${w}`,           dict: { "Это": "Бұл", "моя": "менің" } },
+        eat:        { ru: w => `Я ем ${w}`,                 kz: w => `Мен ${w} жеймін`,          dict: { "Я": "Мен", "ем": "жеймін" } },
+        drink:      { ru: w => `Я пью ${w}`,                kz: w => `Мен ${w} ішемін`,          dict: { "Я": "Мен", "пью": "ішемін" } },
+        segodnya:   { ru: w => `Сегодня ${w}`,               kz: w => `Бүгін ${w}`,               dict: { "Сегодня": "Бүгін" } },
+        seychas:    { ru: w => `Сейчас ${w}`,                kz: w => `Қазір ${w}`,               dict: { "Сейчас": "Қазір" } },
+        umenya:     { ru: w => `У меня есть ${w}`,           kz: w => `Менде ${w} бар`,           dict: { "есть": "бар" } },
+        doma:       { ru: w => `Дома есть ${w}`,             kz: w => `Үйде ${w} бар`,            dict: { "Дома": "Үйде", "есть": "бар" } },
+        ya:         { ru: w => `Я ${w}`,                     kz: w => `Мен ${w}`,                 dict: { "Я": "Мен" } },
+        ochen:      { ru: w => `Он очень ${w}`,              kz: w => `Ол өте ${w}`,              dict: { "Он": "Ол", "очень": "өте" } },
+        let_:       { ru: w => `Мне ${w} лет`,               kz: w => `Маған ${w} жас`,           dict: { "Мне": "Маған", "лет": "жас" } },
+        gde:        { ru: w => `Где находится ${w}?`,        kz: w => `${w} қайда орналасқан`,    dict: { "Где": "қайда", "находится": "орналасқан" } },
+        names:      { ru: w => `Меня зовут ${w}`,            kz: w => `Менің атым ${w}`,          dict: { "Меня": "Менің", "зовут": "атым" } },
+        vlesu:      { ru: w => `В лесу живёт ${w}`,          kz: w => `Орманда ${w} тұрады`,      dict: { "живёт": "тұрады" } },
+        letaet:     { ru: w => `${w} летает`,                kz: w => `${w} ұшады`,               dict: { "летает": "ұшады" } },
+        plavaet:    { ru: w => `${w} плавает`,                kz: w => `${w} жүзеді`,              dict: { "плавает": "жүзеді" } },
+        nastal:     { ru: w => `Наступил ${w}`,              kz: w => `${w} болды`,               dict: { "Наступил": "болды" } }
+    };
+
+    // 50 тем: для каждой указан шаблон и по 3 пары [русское слово, казахское слово]
+    // Темы с fixed:true — это готовые фразы целиком (без шаблона)
+    const TOPIC_DEFS = [
+        { key:"greetings", label:"Приветствия", fixed:true, rule:"Это готовое выражение целиком — просто запомни его как единое целое.",
+          items:[["Здравствуйте","Сәлеметсіз бе"],["Доброе утро","Қайырлы таң"],["Спокойной ночи","Қайырлы түн"]] },
+        { key:"farewells", label:"Прощание", fixed:true, rule:"Это готовое выражение целиком — просто запомни его как единое целое.",
+          items:[["До свидания","Сау болыңыз"],["Пока","Сау бол"],["Увидимся","Кездескенше"]] },
+        { key:"politeness", label:"Вежливость", fixed:true, rule:"Это готовое выражение целиком — просто запомни его как единое целое.",
+          items:[["Спасибо","Рахмет"],["Пожалуйста","Өтінемін"],["Извините","Кешіріңіз"]] },
+        { key:"names", label:"Имена", template:"names", rule:"Притяжательное местоимение «Менің» ставится перед именем, а «атым» (моё имя) — после.",
+          items:[["Данил","Данил"],["Айгуль","Айгуль"],["Ерлан","Ерлан"]] },
+        { key:"family", label:"Семья", template:"moya", rule:"«Бұл менің ...» — «Это мой/моя ...». Притяжательная форма прибавляется к слову.",
+          items:[["мама","анам"],["папа","әкем"],["брат","ағам"]] },
+        { key:"numbers1", label:"Числа 1-3", template:"let_", rule:"Числительное ставится перед словом «жас» (лет/года).",
+          items:[["один","бір"],["два","екі"],["три","үш"]] },
+        { key:"numbers2", label:"Числа 4-6", template:"let_", rule:"Числительное ставится перед словом «жас» (лет/года).",
+          items:[["четыре","төрт"],["пять","бес"],["шесть","алты"]] },
+        { key:"numbers3", label:"Числа 7-9", template:"let_", rule:"Числительное ставится перед словом «жас» (лет/года).",
+          items:[["семь","жеті"],["восемь","сегіз"],["девять","тоғыз"]] },
+        { key:"food", label:"Еда", template:"eat", rule:"Глагол «жеймін» (ем) всегда идёт в конце предложения.",
+          items:[["хлеб","нан"],["мясо","ет"],["рис","күріш"]] },
+        { key:"drinks", label:"Напитки", template:"drink", rule:"Глагол «ішемін» (пью) всегда идёт в конце предложения.",
+          items:[["воду","су"],["чай","шай"],["молоко","сүт"]] },
+        { key:"fruits", label:"Фрукты", template:"eat", rule:"Глагол «жеймін» (ем) всегда идёт в конце предложения.",
+          items:[["яблоко","алма"],["банан","банан"],["грушу","алмұрт"]] },
+        { key:"vegetables", label:"Овощи", template:"eat", rule:"Глагол «жеймін» (ем) всегда идёт в конце предложения.",
+          items:[["картофель","картоп"],["морковь","сәбіз"],["огурец","қияр"]] },
+        { key:"colors", label:"Цвета", template:"eto_kolik", rule:"Прилагательное (цвет) ставится перед существительным, как и в русском языке.",
+          items:[["красная","қызыл"],["синяя","көк"],["белая","ақ"]] },
+        { key:"pets", label:"Домашние животные", template:"eto", rule:"«Бұл» (это) ставится перед названием предмета или животного.",
+          items:[["кошка","мысық"],["собака","ит"],["корова","сиыр"]] },
+        { key:"wild", label:"Дикие животные", template:"vlesu", rule:"«Орманда ... тұрады» — «В лесу живёт ...». Глагол «тұрады» стоит в конце.",
+          items:[["волк","қасқыр"],["медведь","аю"],["лиса","түлкі"]] },
+        { key:"birds", label:"Птицы", template:"letaet", rule:"Слово-действие «ұшады» (летает) ставится после названия птицы.",
+          items:[["голубь","көгершін"],["ворона","қарға"],["орёл","бүркіт"]] },
+        { key:"insects", label:"Насекомые", template:"eto", rule:"«Бұл» (это) ставится перед названием предмета или животного.",
+          items:[["бабочка","көбелек"],["пчела","ара"],["муравей","құмырсқа"]] },
+        { key:"sea", label:"Морские жители", template:"plavaet", rule:"Слово-действие «жүзеді» (плавает) ставится после названия животного.",
+          items:[["рыба","балық"],["дельфин","дельфин"],["краб","шаян"]] },
+        { key:"body", label:"Части тела", template:"moya", rule:"«Бұл менің ...» — «Это моя/мой ...». Притяжательная форма прибавляется к слову.",
+          items:[["рука","қолым"],["нога","аяғым"],["голова","басым"]] },
+        { key:"face", label:"Лицо", template:"moya", rule:"«Бұл менің ...» — «Это моя/мой ...». Притяжательная форма прибавляется к слову.",
+          items:[["глаз","көзім"],["нос","мұрным"],["рот","аузым"]] },
+        { key:"home", label:"Дом и быт", template:"doma", rule:"«Үйде ... бар» — «Дома есть ...». Слово «бар» стоит в конце.",
+          items:[["кровать","төсек"],["стол","үстел"],["стул","орындық"]] },
+        { key:"kitchen", label:"Кухня", template:"eto", rule:"«Бұл» (это) ставится перед названием предмета на кухне.",
+          items:[["ложка","қасық"],["тарелка","табақ"],["чашка","кесе"]] },
+        { key:"bathroom", label:"Ванная комната", template:"umenya", rule:"«Менде ... бар» — «У меня есть ...». Слово «бар» стоит в конце.",
+          items:[["мыло","сабын"],["полотенце","сүлгі"],["зубная щётка","тіс щёткасы"]] },
+        { key:"weather", label:"Погода", template:"segodnya", rule:"«Бүгін» (сегодня) ставится в начале, после него — прилагательное погоды.",
+          items:[["жарко","ыстық"],["холодно","суық"],["дождливо","жаңбырлы"]] },
+        { key:"seasons", label:"Времена года", template:"seychas", rule:"«Қазір» (сейчас) ставится в начале предложения, перед названием сезона.",
+          items:[["зима","қыс"],["лето","жаз"],["осень","күз"]] },
+        { key:"months", label:"Месяцы", template:"nastal", rule:"«... болды» — «Наступил ...». Слово «болды» стоит после названия месяца.",
+          items:[["январь","қаңтар"],["июль","шілде"],["декабрь","желтоқсан"]] },
+        { key:"days", label:"Дни недели", template:"segodnya", rule:"«Бүгін» (сегодня) ставится в начале, после него — название дня без изменений.",
+          items:[["понедельник","дүйсенбі"],["вторник","сейсенбі"],["среда","сәрсенбі"]] },
+        { key:"daytime", label:"Время суток", template:"seychas", rule:"«Қазір» (сейчас) ставится в начале предложения, перед словом времени суток.",
+          items:[["утро","таң"],["день","күн"],["вечер","кеш"]] },
+        { key:"toys", label:"Игрушки", template:"umenya", rule:"«Менде ... бар» — «У меня есть ...». Слово «бар» стоит в конце.",
+          items:[["мяч","доп"],["кукла","қуыршақ"],["машина","көлікше"]] },
+        { key:"school", label:"Школа", template:"eto", rule:"«Бұл» (это) ставится перед названием школьного предмета.",
+          items:[["книга","кітап"],["ручка","қалам"],["тетрадь","дәптер"]] },
+        { key:"jobs", label:"Профессии", template:"eto", rule:"«Бұл» (это) ставится перед названием профессии.",
+          items:[["врач","дәрігер"],["учитель","мұғалім"],["повар","аспаз"]] },
+        { key:"transport", label:"Транспорт", template:"eto", rule:"«Бұл» (это) ставится перед названием транспорта.",
+          items:[["машина","көлік"],["автобус","автобус"],["самолёт","ұшақ"]] },
+        { key:"clothes", label:"Одежда", template:"moya", rule:"«Бұл менің ...» — «Это моя/мой ...». Притяжательная форма прибавляется к слову.",
+          items:[["рубашка","көйлегім"],["брюки","шалбарым"],["шапка","бөрігім"]] },
+        { key:"accessories", label:"Обувь и аксессуары", template:"moya", rule:"«Бұл менің ...» — «Это моя/мой ...». Притяжательная форма прибавляется к слову.",
+          items:[["туфли","туфлим"],["сумка","сөмкем"],["очки","көзілдірігім"]] },
+        { key:"sport", label:"Спорт", template:"eto", rule:"«Бұл» (это) ставится перед названием вида спорта.",
+          items:[["футбол","футбол"],["плавание","жүзу"],["бег","жүгіру"]] },
+        { key:"music", label:"Музыка", template:"eto", rule:"«Бұл» (это) ставится перед названием инструмента.",
+          items:[["гитара","гитара"],["барабан","дауылпаз"],["домбра","домбра"]] },
+        { key:"emotions", label:"Эмоции", template:"ochen", rule:"«Ол өте ...» — «Он/она очень ...». Слово-чувство ставится в конце.",
+          items:[["счастливый","бақытты"],["грустный","мұңды"],["злой","ашулы"]] },
+        { key:"verbs", label:"Глаголы", template:"ya", rule:"Глагол (действие) в казахском языке почти всегда стоит в самом конце предложения.",
+          items:[["читаю","оқимын"],["пишу","жазамын"],["иду","барамын"]] },
+        { key:"adjs", label:"Прилагательные", template:"ochen", rule:"«Ол өте ...» — «Он/она очень ...». Прилагательное ставится в конце.",
+          items:[["красивый","әдемі"],["большой","үлкен"],["маленький","кіші"]] },
+        { key:"ages", label:"Возраст", template:"let_", rule:"«Маған ... жас» — «Мне ... лет».",
+          items:[["один","бір"],["два","екі"],["три","үш"]] },
+        { key:"nature", label:"Природа", template:"eto", rule:"«Бұл» (это) ставится перед названием природного объекта.",
+          items:[["солнце","күн"],["небо","аспан"],["дерево","ағаш"]] },
+        { key:"space", label:"Космос", template:"eto", rule:"«Бұл» (это) ставится перед названием космического объекта.",
+          items:[["луна","ай"],["звезда","жұлдыз"],["планета","планета"]] },
+        { key:"holidays", label:"Праздники", fixed:true, rule:"Это готовое поздравление целиком — просто запомни его как единое целое.",
+          items:[["С днём рождения!","Туған күніңмен!"],["С Новым годом!","Жаңа жылыңмен!"],["Поздравляю!","Құттықтаймын!"]] },
+        { key:"birthday", label:"День рождения", template:"umenya", rule:"«Менде ... бар» — «У меня есть ...». Слово «бар» стоит в конце.",
+          items:[["торт","торт"],["подарок","сыйлық"],["шарик","шар"]] },
+        { key:"health", label:"Здоровье", fixed:true, rule:"Это готовое выражение целиком — просто запомни его как единое целое.",
+          items:[["Я заболел","Мен ауырдым"],["Мне нужен врач","Маған дәрігер керек"],["Всё хорошо","Бәрі жақсы"]] },
+        { key:"shop", label:"Магазин", fixed:true, rule:"Это готовое выражение целиком — просто запомни его как единое целое.",
+          items:[["Сколько это стоит?","Бұл қанша тұрады?"],["Дайте, пожалуйста","Беріңізші"],["Это дорого","Бұл қымбат"]] },
+        { key:"money", label:"Деньги", template:"umenya", rule:"«Менде ... бар» — «У меня есть ...». Слово «бар» стоит в конце.",
+          items:[["монета","тиын"],["банкнота","банкнот"],["кошелёк","әмиян"]] },
+        { key:"shapes", label:"Формы", template:"eto", rule:"«Бұл» (это) ставится перед названием фигуры.",
+          items:[["круг","дөңгелек"],["квадрат","шаршы"],["треугольник","үшбұрыш"]] },
+        { key:"prepositions", label:"Расположение", fixed:true, rule:"Это готовое выражение с предлогом места — запомни его целиком.",
+          items:[["На столе","Үстелде"],["Под столом","Үстел астында"],["В комнате","Бөлмеде"]] },
+        { key:"places", label:"Места", template:"gde", rule:"Вопросительное слово «қайда» (где) ставится перед глаголом «орналасқан» (находится).",
+          items:[["дом","үй"],["школа","мектеп"],["магазин","дүкен"]] }
+    ];
+
+    const EXERCISE_TYPES = ["constructor", "choice", "flashcard"];
+    const EXERCISE_LABELS = {
+        constructor: "🧩 Собери фразу",
+        choice: "✅ Выбери перевод",
+        flashcard: "🔄 Карточка"
+    };
+
+    const courseData = [];
+    TOPIC_DEFS.forEach(topic => {
+        if (topic.fixed) {
+            topic.items.forEach(([ru, kz], idx) => {
+                const others = topic.items.filter(x => x[1] !== kz).map(x => x[1].split(' ')).flat();
+                courseData.push({
+                    topic: topic.label,
+                    ru: ru,
+                    kz: kz,
+                    rule: topic.rule,
+                    dict: { [ru]: kz },
+                    extra: others.slice(0, 3),
+                    exerciseType: EXERCISE_TYPES[idx % 3]
+                });
+            });
+        } else {
+            const tpl = TEMPLATES[topic.template];
+            topic.items.forEach(([ru, kz], idx) => {
+                const others = topic.items.filter(x => x[1] !== kz).map(x => x[1]);
+                courseData.push({
+                    topic: topic.label,
+                    ru: tpl.ru(ru),
+                    kz: tpl.kz(kz),
+                    rule: topic.rule,
+                    dict: Object.assign({}, tpl.dict, { [ru]: kz }),
+                    extra: others.slice(0, 3),
+                    exerciseType: EXERCISE_TYPES[idx % 3]
+                });
+            });
+        }
+    });
+
+    /* ===================== Логика тренажёра ===================== */
+
+    let currentLevel = parseInt(localStorage.getItem('danilingo_lvl')) || 0;
+    if (currentLevel >= courseData.length) currentLevel = 0;
+
+    let flashcardFlipped = false;
+    let choiceSelected = null;
+
+    function loadLevel() {
+        const data = courseData[currentLevel];
+
+        document.getElementById('levelIndicator').textContent = `${currentLevel + 1} / ${courseData.length}`;
+        document.getElementById('progressBar').style.width = `${((currentLevel + 1) / courseData.length) * 100}%`;
+        document.getElementById('ruleText').textContent = data.rule;
+        document.getElementById('topicBadge').textContent = data.topic;
+        document.getElementById('methodBadge').textContent = EXERCISE_LABELS[data.exerciseType];
+
+        const checkBtn = document.getElementById('checkBtn');
+        checkBtn.style.backgroundColor = '#1cb0f6';
+        checkBtn.onclick = checkAnswer;
+
+        if (data.exerciseType === 'constructor') renderConstructor(data);
+        else if (data.exerciseType === 'choice') renderChoice(data);
+        else if (data.exerciseType === 'flashcard') renderFlashcard(data);
+
+        renderDictionary();
+    }
+
+    /* ---------- Тип 1: Собери фразу из слов ---------- */
+    function renderConstructor(data) {
+        document.getElementById('questionTitle').textContent = 'Переведите эту фразу:';
+        const area = document.getElementById('exerciseArea');
+        area.innerHTML = `
+            <div class="phrase-container" id="phraseContainer"></div>
+            <div class="answer-area" id="answerArea"></div>
+            <div class="word-bank" id="wordBank"></div>
+        `;
+
+        const phraseContainer = document.getElementById('phraseContainer');
+        data.ru.split(' ').forEach(word => {
+            const wrap = document.createElement('span');
+            wrap.className = 'interactive-word';
+            wrap.textContent = word + ' ';
+
+            const tooltip = document.createElement('span');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = data.dict[word] || "перевод";
+            wrap.appendChild(tooltip);
+
+            wrap.onclick = () => {
+                const isVis = tooltip.style.display === 'block';
+                document.querySelectorAll('.tooltip').forEach(t => t.style.display = 'none');
+                if (!isVis) tooltip.style.display = 'block';
+            };
+
+            phraseContainer.appendChild(wrap);
+        });
+
+        const answerArea = document.getElementById('answerArea');
+        const wordBank = document.getElementById('wordBank');
+        const pool = [...data.kz.split(' '), ...data.extra].sort(() => Math.random() - 0.5);
+
+        pool.forEach((wordText, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'chip';
+            btn.textContent = wordText;
+            btn.id = `chip-${idx}`;
+            btn.onclick = () => selectWord(btn);
+            wordBank.appendChild(btn);
+        });
+
+        const checkBtn = document.getElementById('checkBtn');
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'ПРОВЕРИТЬ';
+    }
+
+    function selectWord(chip) {
+        const answerArea = document.getElementById('answerArea');
+
+        if (chip.classList.contains('in-answer')) {
+            chip.remove();
+            const orig = document.getElementById(chip.dataset.origId);
+            if (orig) orig.classList.remove('used');
+        } else {
+            chip.classList.add('used');
+            const clone = chip.cloneNode(true);
+            clone.classList.remove('used');
+            clone.classList.add('in-answer');
+            clone.dataset.origId = chip.id;
+            clone.onclick = () => selectWord(clone);
+            answerArea.appendChild(clone);
+        }
+
+        document.getElementById('checkBtn').disabled = answerArea.children.length === 0;
+    }
+
+    /* ---------- Тип 2: Выбери правильный перевод ---------- */
+    function renderChoice(data) {
+        document.getElementById('questionTitle').textContent = `Как будет: «${data.ru}»?`;
+        const area = document.getElementById('exerciseArea');
+        area.innerHTML = `<div class="choice-grid" id="choiceGrid"></div>`;
+
+        const options = [data.kz, ...data.extra].filter((v, i, a) => a.indexOf(v) === i);
+        while (options.length < 4 && options.length < 4) {
+            // если вариантов меньше 4 — не страшно, покажем сколько есть
+            break;
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        choiceSelected = null;
+        const grid = document.getElementById('choiceGrid');
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-option';
+            btn.textContent = opt;
+            btn.onclick = () => {
+                document.querySelectorAll('.choice-option').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                choiceSelected = opt;
+                document.getElementById('checkBtn').disabled = false;
+            };
+            grid.appendChild(btn);
+        });
+
+        const checkBtn = document.getElementById('checkBtn');
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'ПРОВЕРИТЬ';
+    }
+
+    /* ---------- Тип 3: Флеш-карточка (запоминание) ---------- */
+    function renderFlashcard(data) {
+        document.getElementById('questionTitle').textContent = 'Переверни карточку и запомни:';
+        const area = document.getElementById('exerciseArea');
+        area.innerHTML = `<div class="flashcard" id="flashcard">${data.ru}<span class="fc-hint">нажми, чтобы увидеть перевод</span></div>`;
+
+        flashcardFlipped = false;
+        const card = document.getElementById('flashcard');
+        card.onclick = () => {
+            flashcardFlipped = true;
+            card.classList.add('flipped');
+            card.innerHTML = `${data.kz}<span class="fc-hint">это перевод фразы «${data.ru}»</span>`;
+            document.getElementById('checkBtn').disabled = false;
+        };
+
+        const checkBtn = document.getElementById('checkBtn');
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'Я ЗАПОМНИЛ, ДАЛЕЕ';
+    }
+
+    function checkAnswer() {
+        const data = courseData[currentLevel];
+        const checkBtn = document.getElementById('checkBtn');
+
+        let isCorrect = true;
+
+        if (data.exerciseType === 'constructor') {
+            const answerArea = document.getElementById('answerArea');
+            const userKz = Array.from(answerArea.children).map(c => c.textContent).join(' ');
+            isCorrect = userKz === data.kz;
+        } else if (data.exerciseType === 'choice') {
+            isCorrect = choiceSelected === data.kz;
+            document.querySelectorAll('.choice-option').forEach(b => {
+                if (b.textContent === data.kz) b.classList.add('correct');
+                else if (b.classList.contains('selected') && !isCorrect) b.classList.add('wrong');
+            });
+        } else if (data.exerciseType === 'flashcard') {
+            isCorrect = true; // флеш-карточка — это запоминание, не проверка
+        }
+
+        if (isCorrect) {
+            checkBtn.textContent = 'ОТЛИЧНО! ДАЛЕЕ';
+            checkBtn.style.backgroundColor = '#58cc02';
+            currentLevel++;
+            localStorage.setItem('danilingo_lvl', currentLevel);
+
+            checkBtn.onclick = () => {
+                if (currentLevel < courseData.length) {
+                    loadLevel();
+                } else {
+                    alert('Поздравляем! Курс полностью пройден!');
+                    resetProgress();
+                }
+            };
+        } else {
+            checkBtn.textContent = 'ОШИБКА! ПОПРОБУЙ СНОВА';
+            checkBtn.style.backgroundColor = '#ff4b4b';
+            setTimeout(() => {
+                checkBtn.textContent = 'ПРОВЕРИТЬ';
+                checkBtn.style.backgroundColor = '#1cb0f6';
+                if (data.exerciseType === 'choice') {
+                    document.querySelectorAll('.choice-option').forEach(b => {
+                        b.classList.remove('correct', 'wrong', 'selected');
+                    });
+                    choiceSelected = null;
+                    document.getElementById('checkBtn').disabled = true;
+                }
+            }, 1500);
+        }
+    }
+
+    function renderDictionary() {
+        const dictList = document.getElementById('dictList');
+        dictList.innerHTML = '';
+        const data = courseData[currentLevel];
+
+        Object.entries(data.dict).forEach(([ru, kz]) => {
+            const item = document.createElement('div');
+            item.className = 'dict-item';
+            item.innerHTML = `<span class="dict-kk">${kz}</span><span class="dict-ru">${ru}</span>`;
+            dictList.appendChild(item);
+        });
+    }
+
+    function filterDict() {
+        const q = document.getElementById('dictSearch').value.toLowerCase();
+        document.querySelectorAll('.dict-item').forEach(item => {
+            const txt = item.textContent.toLowerCase();
+            item.style.display = txt.includes(q) ? 'flex' : 'none';
+        });
+    }
+
+    function toggleMenu(open) {
+        const menu = document.getElementById('sideMenu');
+        if (open) {
+            menu.classList.add('open');
+        } else {
+            menu.classList.remove('open');
+        }
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
+
+        if (tabName === 'dict') {
+            document.querySelectorAll('.nav-btn')[0].classList.add('active');
+            document.getElementById('tab-dict').classList.add('active');
+        } else if (tabName === 'questions') {
+            document.querySelectorAll('.nav-btn')[1].classList.add('active');
+            document.getElementById('tab-questions').classList.add('active');
+        } else if (tabName === 'grammar') {
+            document.querySelectorAll('.nav-btn')[2].classList.add('active');
+            document.getElementById('tab-grammar').classList.add('active');
+        }
+    }
+
+    function resetProgress() {
+        if (confirm("Сбросить прогресс и начать сначала?")) {
+            localStorage.removeItem('danilingo_lvl');
+            currentLevel = 0;
+            loadLevel();
+        }
+    }
+
+    loadLevel();
+</script>
+</body>
+</html>
