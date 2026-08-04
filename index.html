@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BarberStudio — Стиль и Мастерство</title>
+  
+  <!-- Подключение стильных шрифтов -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== ПЕРЕМЕННЫЕ И ТЕМЫ (ТЕМНАЯ / СВЕТЛАЯ) ===== */
+    :root {
+      --bg: #0d0d0d;
+      --card-bg: #171717;
+      --text: #f5f5f5;
+      --text-muted: #a3a3a3;
+      --border: #262626;
+      --accent: #ffffff;
+      --accent-text: #000000;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      --font-title: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #111111;
+      --text-muted: #666666;
+      --border: #e5e5e5;
+      --accent: #111111;
+      --accent-text: #ffffff;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    /* ===== СБРОС И БАЗОВЫЕ СТИЛИ ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 60px;
+      overflow-x: hidden;
+    }
+
+    /* ===== ШАПКА И НАВИГАЦИЯ ===== */
+    header {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .brand {
+      font-family: var(--font-title);
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .icon-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      transform: scale(1.08);
+      border-color: var(--accent);
+    }
+
+    .icon-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* ===== ГЛАВНЫЙ КОНТЕНТ ===== */
+    main {
+      width: 100%;
+      max-width: 600px;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-card h1 {
+      font-family: var(--font-title);
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+
+    .hero-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    /* БАННЕР СТАТУСА ЗАКАЗА КЛИЕНТА */
+    .status-banner {
+      background: var(--card-bg);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      display: none;
+      animation: slideDown 0.4s ease;
+      position: relative;
+    }
+
+    .status-banner.active {
+      display: block;
+    }
+
+    .status-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .status-text {
+      font-weight: 500;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .status-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    /* КНОПКИ УСЛУГ И ЗАПИСИ */
+    .service-box {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .service-info h3 {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+
+    .price-tag {
+      background: var(--accent);
+      color: var(--accent-text);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .btn-main {
+      width: 100%;
+      background: var(--accent);
+      color: var(--accent-text);
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    /* ===== МОДАЛЬНЫЕ ОКНА ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 480px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.open .modal {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      font-family: var(--font-title);
+      font-size: 1.5rem;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ПОЛЯ ВВОДА */
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--text);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* КАРТОЧКИ ЗАКАЗОВ В ПАНЕЛИ ПАРИКМАХЕРА */
+    .order-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: var(--bg);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .order-msg {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 8px 0;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* РЕЖИМ ПАРИКМАХЕРА (ПЕРЕКЛЮЧАТЕЛЬ) */
+    .role-badge {
+      font-size: 0.75rem;
+      background: var(--border);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-top: 8px;
+      display: inline-block;
+    }
+
+    /* АНИМАЦИИ */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ШАПКА -->
+  <header>
+    <!-- Кнопка Настройки (Слева) -->
+    <button class="icon-btn" id="btnSettings" title="Настройки">
+      <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+    </button>
+
+    <div class="brand">
+      BARBER
+      <div style="text-align: center;"><span id="roleBadge" class="role-badge">Гость</span></div>
+    </div>
+
+    <!-- Кнопка Заказы (Справа) -->
+    <button class="icon-btn" id="btnOrders" title="Заказы">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      <div class="badge" id="ordersBadge" style="display: none;">0</div>
+    </button>
+  </header>
+
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <main>
+    <!-- Баннер статуса заказа для клиента -->
+    <div class="status-banner" id="statusBanner">
+      <div class="status-title">Статус вашей записи</div>
+      <div class="status-text" id="statusText">Загрузка...</div>
+      <div class="status-actions" id="statusActions" style="display: none;">
+        <button class="btn-success" id="btnAcceptNewTime">Согласиться</button>
+        <button class="btn-danger" id="btnDeclineNewTime">Отказ</button>
+      </div>
+    </div>
+
+    <!-- Главная карточка -->
+    <section class="hero-card">
+      <h1>Искусство Вашего Стиля</h1>
+      <p>«Качественная стрижка — это не просто уход, это проявление уважения к себе.»</p>
+
+      <div class="service-box">
+        <div class="service-info">
+          <h3>Мужская стрижка</h3>
+          <span style="color: var(--text-muted); font-size: 0.85rem;">Мытье головы, консультация и укладка</span>
+        </div>
+        <div class="price-tag">500 ₽</div>
+      </div>
+
+      <button class="btn-main" id="btnBookOpen">
+        Записаться на стрижку
+      </button>
+    </section>
+  </main>
+
+  <!-- МОДАЛЬНОЕ ОКНО: ЗАПИСЬ НА СТРИЖКУ -->
+  <div class="modal-overlay" id="modalBooking">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Онлайн-запись</h2>
+        <button class="close-btn" id="btnCloseBooking">&times;</button>
+      </div>
+      <form id="bookingForm">
+        <div class="form-group">
+          <label>Выберите дату</label>
+          <input type="date" class="form-control" id="bookDate" required>
+        </div>
+        <div class="form-group">
+          <label>Выберите время</label>
+          <input type="time" class="form-control" id="bookTime" required step="1800">
+        </div>
+        <div class="form-group">
+          <label>Ваше имя и контакты</label>
+          <input type="text" class="form-control" id="bookClientName" placeholder="Александр (+7 900...)" required>
+        </div>
+        <div class="form-group">
+          <label>Сообщение или пожелание парикмахеру</label>
+          <textarea class="form-control" id="bookMessage" placeholder="Например: хочу сделать фейд или убрать бока..."></textarea>
+        </div>
+        <button type="submit" class="btn-main" style="margin-top: 10px;">Отправить запись</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО: ВЕРИФИКАЦИЯ ПАРИКМАХЕРА -->
+  <div class="modal-overlay" id="modalAuth">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Вход для мастерa</h2>
+        <button class="close-btn" id="btnCloseAuth">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Введите пароль или секретное слово</label>
+        <input type="password" class="form-control" id="authPassword" placeholder="Пароль (по умолч.: 1234)">
+      </div>
+      <button class="btn-main" id="btnSubmitAuth">Войти</button>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО: ЗАКАЗЫ (ДЛЯ ПАРИКМАХЕРА) -->
+  <div class="modal-overlay" id="modalOrders">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Входящие заказы</h2>
+        <button class="close-btn" id="btnCloseOrders">&times;</button>
+      </div>
+      <div id="ordersList">
+        <!-- Сюда динамически рендерятся заказы -->
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО: ПЕРЕНОС ВРЕМЕНИ -->
+  <div class="modal-overlay" id="modalReschedule">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Предложить другое время</h2>
+        <button class="close-btn" id="btnCloseReschedule">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Новая дата</label>
+        <input type="date" class="form-control" id="rescheduleDate">
+      </div>
+      <div class="form-group">
+        <label>Новое время</label>
+        <input type="time" class="form-control" id="rescheduleTime" step="1800">
+      </div>
+      <button class="btn-main" id="btnSubmitReschedule">Отправить предложение</button>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО: НАСТРОЙКИ -->
+  <div class="modal-overlay" id="modalSettings">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Настройки</h2>
+        <button class="close-btn" id="btnCloseSettings">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Тема оформления</label>
+        <button class="btn-secondary" id="btnToggleTheme" style="width: 100%;">Переключить тему (Черная / Светлая)</button>
+      </div>
+      <hr style="border-color: var(--border); margin: 16px 0;">
+      <div id="barberSettingsBlock">
+        <h3 style="font-size: 1rem; margin-bottom: 12px; font-family: var(--font-title);">Параметры работы парикмахера</h3>
+        <div class="form-group">
+          <label>Время закрытия салона</label>
+          <input type="time" class="form-control" id="settingClosingTime" value="20:00">
+        </div>
+        <div class="form-group">
+          <label>Интервал между записями (минуты)</label>
+          <select class="form-control" id="settingInterval">
+            <option value="30">30 минут</option>
+            <option value="45">45 минут</option>
+            <option value="60">60 минут</option>
+          </select>
+        </div>
+        <button class="btn-main" id="btnSaveSettings" style="margin-top: 10px;">Сохранить настройки</button>
+      </div>
+      <div style="margin-top: 20px; text-align: center;">
+        <button class="btn-secondary" id="btnExitBarberRole" style="display: none; font-size: 0.8rem; color: var(--danger); border-color: var(--danger);">Выйти из режима парикмахера</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== JAVASCRIPT ЛОГИКА ===== -->
+  <script>
+    /* ===== ИНИЦИАЛИЗАЦИЯ И ХРАНИЛИЩЕ LOCALSTORAGE ===== */
+    const STORAGE_KEY_ORDERS = 'barber_orders_data';
+    const STORAGE_KEY_SETTINGS = 'barber_settings_data';
+    const STORAGE_KEY_ROLE = 'barber_is_authenticated';
+    const STORAGE_KEY_CLIENT_ORDER = 'barber_current_client_order_id';
+    const STORAGE_KEY_THEME = 'barber_theme_preference';
+
+    // Пароль доступа для мастера
+    const BARBER_SECRET_PASS = '1234';
+    const BARBER_SECRET_WORD = 'парикмахер';
+
+    let orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || [];
+    let settings = JSON.parse(localStorage.getItem(STORAGE_KEY_SETTINGS)) || {
+      closingTime: "20:00",
+      interval: 30
+    };
+    let isBarber = localStorage.getItem(STORAGE_KEY_ROLE) === 'true';
+    let activeRescheduleOrderId = null;
+
+    /* ===== ЭЛЕМЕНТЫ DOM ===== */
+    const modalBooking = document.getElementById('modalBooking');
+    const modalAuth = document.getElementById('modalAuth');
+    const modalOrders = document.getElementById('modalOrders');
+    const modalReschedule = document.getElementById('modalReschedule');
+    const modalSettings = document.getElementById('modalSettings');
+
+    const statusBanner = document.getElementById('statusBanner');
+    const statusText = document.getElementById('statusText');
+    const statusActions = document.getElementById('statusActions');
+    const roleBadge = document.getElementById('roleBadge');
+    const ordersBadge = document.getElementById('ordersBadge');
+
+    /* ===== РЕНДЕР И ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===== */
+    function updateUI() {
+      // Статус роли
+      if (isBarber) {
+        roleBadge.textContent = 'Мастер (Парикмахер)';
+        roleBadge.style.background = 'var(--accent)';
+        roleBadge.style.color = 'var(--accent-text)';
+        document.getElementById('barberSettingsBlock').style.display = 'block';
+        document.getElementById('btnExitBarberRole').style.display = 'inline-block';
+      } else {
+        roleBadge.textContent = 'Клиент';
+        roleBadge.style.background = 'var(--border)';
+        roleBadge.style.color = 'var(--text)';
+        document.getElementById('barberSettingsBlock').style.display = 'none';
+        document.getElementById('btnExitBarberRole').style.display = 'none';
+      }
+
+      // Бейджик необработанных заказов
+      const pendingCount = orders.filter(o => o.status === 'pending').length;
+      if (pendingCount > 0) {
+        ordersBadge.textContent = pendingCount;
+        ordersBadge.style.display = 'flex';
+      } else {
+        ordersBadge.style.display = 'none';
+      }
+
+      // Статус текущей записи клиента
+      updateClientStatusBanner();
+    }
+
+    function updateClientStatusBanner() {
+      const currentOrderId = localStorage.getItem(STORAGE_KEY_CLIENT_ORDER);
+      if (!currentOrderId) {
+        statusBanner.classList.remove('active');
+        return;
+      }
+
+      const clientOrder = orders.find(o => o.id === currentOrderId);
+      if (!clientOrder) {
+        statusBanner.classList.remove('active');
+        return;
+      }
+
+      statusBanner.classList.add('active');
+      statusActions.style.display = 'none';
+
+      const formattedOriginalDate = formatDate(clientOrder.date, clientOrder.time);
+
+      if (clientOrder.status === 'pending') {
+        statusText.innerHTML = `⏳ Парикмахер еще не просмотрел ваш заказ на <b>${formattedOriginalDate}</b>.`;
+      } else if (clientOrder.status === 'approved') {
+        statusText.innerHTML = `✅ Парикмахер одобрил заказ на <b>${formatDate(clientOrder.finalDate || clientOrder.date, clientOrder.finalTime || clientOrder.time)}</b>. Ждем вас!`;
+      } else if (clientOrder.status === 'rejected') {
+        statusText.innerHTML = `❌ Парикмахер отклонил запись на <b>${formattedOriginalDate}</b>.`;
+      } else if (clientOrder.status === 'proposed_new_time') {
+        const formattedNewDate = formatDate(clientOrder.proposedDate, clientOrder.proposedTime);
+        statusText.innerHTML = `⚠️ Парикмахер предлагает перенести запись на другое время: <b>${formattedNewDate}</b>. Вы согласны?`;
+        statusActions.style.display = 'flex';
+      }
+    }
+
+    function formatDate(dateStr, timeStr) {
+      if (!dateStr) return '';
+      const [year, month, day] = dateStr.split('-');
+      const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+      const monthName = months[parseInt(month, 10) - 1] || '';
+      return `${timeStr}, ${parseInt(day, 10)} ${monthName} ${year} года`;
+    }
+
+    /* ===== РЕНДЕР СПИСКА ЗАКАЗОВ ===== */
+    function renderOrdersList() {
+      const container = document.getElementById('ordersList');
+      container.innerHTML = '';
+
+      if (orders.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color: var(--text-muted); padding: 20px;">Заказов пока нет</p>';
+        return;
+      }
+
+      orders.slice().reverse().forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+
+        let statusTag = '';
+        if (order.status === 'pending') statusTag = '<span style="color: var(--warning);">● Новый</span>';
+        else if (order.status === 'approved') statusTag = '<span style="color: var(--success);">● Одобрен</span>';
+        else if (order.status === 'rejected') statusTag = '<span style="color: var(--danger);">● Отклонен</span>';
+        else if (order.status === 'proposed_new_time') statusTag = '<span style="color: var(--warning);">● Предложено новое время</span>';
+
+        card.innerHTML = `
+          <div class="order-header">
+            <span>${order.clientName}</span>
+            <span style="font-size: 0.85rem;">${statusTag}</span>
+          </div>
+          <div style="font-size: 0.9rem; margin-bottom: 4px;">📅 <b>${formatDate(order.date, order.time)}</b></div>
+          ${order.message ? `<div class="order-msg">💬 "${order.message}"</div>` : ''}
+          
+          <div class="order-actions">
+            ${order.status === 'pending' || order.status === 'proposed_new_time' ? `
+              <button class="btn-success" onclick="approveOrder('${order.id}')">Принять</button>
+              <button class="btn-danger" onclick="rejectOrder('${order.id}')">Отклонить</button>
+              <button class="btn-secondary" onclick="openRescheduleModal('${order.id}')">Другое время</button>
+            ` : `<span style="font-size: 0.8rem; color: var(--text-muted);">Обработан</span>`}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ===== ЛОГИКА ПРОВЕРКИ И СОЗДАНИЯ ЗАКАЗА ===== */
+    document.getElementById('bookingForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const date = document.getElementById('bookDate').value;
+      const time = document.getElementById('bookTime').value;
+      const clientName = document.getElementById('bookClientName').value.trim();
+      const message = document.getElementById('bookMessage').value.trim();
+
+      // 1. Проверка времени закрытия
+      if (time >= settings.closingTime) {
+        alert(`Салон закрывается в ${settings.closingTime}. Пожалуйста, выберите более раннее время!`);
+        return;
+      }
+
+      // 2. Проверка на конфликты по времени с существующими одобренными или ожидающими заказами
+      const isTimeOccupied = orders.some(o => {
+        if (o.status === 'rejected') return false;
+        const oDate = o.finalDate || o.proposedDate || o.date;
+        const oTime = o.finalTime || o.proposedTime || o.time;
+        return oDate === date && oTime === time;
+      });
+
+      if (isTimeOccupied) {
+        alert(`К сожалению, время ${time} на ${date} уже занято! Выберите другое время с учетом интервала ${settings.interval} мин.`);
+        return;
+      }
+
+      // Создание заказа
+      const newOrder = {
+        id: 'ord_' + Date.now(),
+        date,
+        time,
+        clientName,
+        message,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      };
+
+      orders.push(newOrder);
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+      localStorage.setItem(STORAGE_KEY_CLIENT_ORDER, newOrder.id);
+
+      closeModal(modalBooking);
+      document.getElementById('bookingForm').reset();
+      updateUI();
+
+      alert('Ваш заказ отправлен парикмахеру!');
+    });
+
+    /* ===== ДЕЙСТВИЯ ПАРИКМАХЕРА С ЗАКАЗАМИ ===== */
+    window.approveOrder = function(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        order.status = 'approved';
+        order.finalDate = order.proposedDate || order.date;
+        order.finalTime = order.proposedTime || order.time;
+        saveOrders();
+      }
+    };
+
+    window.rejectOrder = function(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        order.status = 'rejected';
+        saveOrders();
+      }
+    };
+
+    window.openRescheduleModal = function(orderId) {
+      activeRescheduleOrderId = orderId;
+      openModal(modalReschedule);
+    };
+
+    document.getElementById('btnSubmitReschedule').addEventListener('click', () => {
+      const date = document.getElementById('rescheduleDate').value;
+      const time = document.getElementById('rescheduleTime').value;
+
+      if (!date || !time) {
+        alert('Пожалуйста, выберите дату и время!');
+        return;
+      }
+
+      const order = orders.find(o => o.id === activeRescheduleOrderId);
+      if (order) {
+        order.status = 'proposed_new_time';
+        order.proposedDate = date;
+        order.proposedTime = time;
+        saveOrders();
+        closeModal(modalReschedule);
+      }
+    });
+
+    function saveOrders() {
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+      renderOrdersList();
+      updateUI();
+    }
+
+    /* ===== РЕАКЦИЯ КЛИЕНТА НА ПРЕДЛОЖЕННОЕ ВРЕМЯ ===== */
+    document.getElementById('btnAcceptNewTime').addEventListener('click', () => {
+      const currentOrderId = localStorage.getItem(STORAGE_KEY_CLIENT_ORDER);
+      const order = orders.find(o => o.id === currentOrderId);
+      if (order) {
+        order.status = 'approved';
+        order.finalDate = order.proposedDate;
+        order.finalTime = order.proposedTime;
+        saveOrders();
+      }
+    });
+
+    document.getElementById('btnDeclineNewTime').addEventListener('click', () => {
+      const currentOrderId = localStorage.getItem(STORAGE_KEY_CLIENT_ORDER);
+      const order = orders.find(o => o.id === currentOrderId);
+      if (order) {
+        order.status = 'rejected';
+        saveOrders();
+      }
+    });
+
+    /* ===== ВЕРИФИКАЦИЯ И АВТОРИЗАЦИЯ ПАРИКМАХЕРА ===== */
+    document.getElementById('btnOrders').addEventListener('click', () => {
+      if (isBarber) {
+        renderOrdersList();
+        openModal(modalOrders);
+      } else {
+        openModal(modalAuth);
+      }
+    });
+
+    document.getElementById('btnSubmitAuth').addEventListener('click', () => {
+      const inputPass = document.getElementById('authPassword').value.trim().toLowerCase();
+      if (inputPass === BARBER_SECRET_PASS || inputPass === BARBER_SECRET_WORD) {
+        isBarber = true;
+        localStorage.setItem(STORAGE_KEY_ROLE, 'true');
+        closeModal(modalAuth);
+        document.getElementById('authPassword').value = '';
+        updateUI();
+        renderOrdersList();
+        openModal(modalOrders);
+      } else {
+        alert('Неверный пароль!');
+      }
+    });
+
+    document.getElementById('btnExitBarberRole').addEventListener('click', () => {
+      isBarber = false;
+      localStorage.setItem(STORAGE_KEY_ROLE, 'false');
+      closeModal(modalSettings);
+      updateUI();
+    });
+
+    /* ===== НАСТРОЙКИ И ТЕМА ===== */
+    document.getElementById('btnSettings').addEventListener('click', () => {
+      document.getElementById('settingClosingTime').value = settings.closingTime;
+      document.getElementById('settingInterval').value = settings.interval;
+      openModal(modalSettings);
+    });
+
+    document.getElementById('btnSaveSettings').addEventListener('click', () => {
+      settings.closingTime = document.getElementById('settingClosingTime').value;
+      settings.interval = parseInt(document.getElementById('settingInterval').value, 10);
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+      closeModal(modalSettings);
+      alert('Настройки успешно сохранены!');
+    });
+
+    // Переключение темы
+    document.getElementById('btnToggleTheme').addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      setTheme(newTheme);
+    });
+
+    function setTheme(theme) {
+      if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+      localStorage.setItem(STORAGE_KEY_THEME, theme);
+    }
+
+    // Загрузка темы
+    const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+    if (savedTheme) setTheme(savedTheme);
+
+    /* ===== УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===== */
+    document.getElementById('btnBookOpen').addEventListener('click', () => openModal(modalBooking));
+    document.getElementById('btnCloseBooking').addEventListener('click', () => closeModal(modalBooking));
+    document.getElementById('btnCloseAuth').addEventListener('click', () => closeModal(modalAuth));
+    document.getElementById('btnCloseOrders').addEventListener('click', () => closeModal(modalOrders));
+    document.getElementById('btnCloseReschedule').addEventListener('click', () => closeModal(modalReschedule));
+    document.getElementById('btnCloseSettings').addEventListener('click', () => closeModal(modalSettings));
+
+    function openModal(modal) {
+      modal.classList.add('open');
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove('open');
+    }
+
+    // Закрытие при клике на темный фон
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal(overlay);
+      });
+    });
+
+    // Установка минимальной даты для записи (сегодня)
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('bookDate').min = today;
+
+    // Первоначальный рендер
+    updateUI();
+  </script>
+</body>
+</html>
+
