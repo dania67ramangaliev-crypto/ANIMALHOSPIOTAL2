@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BarberStudio — Стиль и Мастерство</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    /* ===== ТЕМЫ ОФОРМЛЕНИЯ ===== */
+    :root {
+      --bg: #0d0d0d;
+      --card-bg: #171717;
+      --text: #f5f5f5;
+      --text-muted: #a3a3a3;
+      --border: #262626;
+      --accent: #ffffff;
+      --accent-text: #000000;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      --font-title: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #111111;
+      --text-muted: #666666;
+      --border: #e5e5e5;
+      --accent: #111111;
+      --accent-text: #ffffff;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 60px;
+    }
+
+    /* ===== ШАПКА ===== */
+    header {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 20px;
+      position: relative;
+    }
+
+    .brand {
+      font-family: var(--font-title);
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .icon-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+
+    .icon-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* ===== ОСНОВНОЙ ЭКРАН ===== */
+    main {
+      width: 100%;
+      max-width: 600px;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card h1 {
+      font-family: var(--font-title);
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+
+    .hero-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .service-box {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .price-tag {
+      background: var(--accent);
+      color: var(--accent-text);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .btn-main {
+      width: 100%;
+      background: var(--accent);
+      color: var(--accent-text);
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn-danger { background: var(--danger); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; }
+    .btn-success { background: var(--success); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; }
+
+    /* БАННЕР СТАТУСА ДЛЯ КЛИЕНТА */
+    .status-banner {
+      background: var(--card-bg);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      display: none;
+    }
+
+    .status-banner.active { display: block; }
+
+    /* ===== МОДАЛЬНЫЕ ОКНА ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 480px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 { font-family: var(--font-title); }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label { font-size: 0.85rem; color: var(--text-muted); }
+
+    .form-control {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      width: 100%;
+    }
+
+    .order-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: var(--bg);
+    }
+
+    .role-choice-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .role-btn {
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .role-btn:hover { border-color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <button class="icon-btn" id="btnSettings" title="Настройки">
+      <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+    </button>
+
+    <div class="brand">
+      BARBER
+      <div style="text-align: center;"><span id="roleBadge" class="role-badge" style="font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; background: var(--border);">Гость</span></div>
+    </div>
+
+    <button class="icon-btn" id="btnOrders" title="Заказы">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      <div class="badge" id="ordersBadge" style="display: none;">0</div>
+    </button>
+  </header>
+
+  <main>
+    <div class="status-banner" id="statusBanner">
+      <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Ваша запись</div>
+      <div id="statusText" style="font-weight: 500;">...</div>
+      <div id="statusActions" style="display: none; gap: 10px; margin-top: 12px;">
+        <button class="btn-success" id="btnAcceptNewTime">Согласиться</button>
+        <button class="btn-danger" id="btnDeclineNewTime">Отказ</button>
+      </div>
+    </div>
+
+    <section class="hero-card">
+      <h1>Искусство Вашего Стиля</h1>
+      <p>«Премиальные стрижки и безупречный сервис.»</p>
+
+      <div class="service-box">
+        <div>
+          <h3>Стрижка</h3>
+          <span style="color: var(--text-muted); font-size: 0.85rem;">Мытье головы и укладка</span>
+        </div>
+        <div class="price-tag">500 ₽</div>
+      </div>
+
+      <button class="btn-main" id="btnBookOpen">Записаться</button>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="modalRoleChoice">
+    <div class="modal" style="text-align: center;">
+      <h2 style="font-family: var(--font-title); font-size: 1.8rem; margin-bottom: 8px;">Добро пожаловать</h2>
+      <p style="color: var(--text-muted); font-size: 1rem;">Вы ?</p>
+      
+      <div class="role-choice-btns">
+        <button class="role-btn" id="btnSelectClient">
+          👤 Клиент
+        </button>
+        <button class="role-btn" id="btnSelectBarber">
+          ✂️ Парикмахер
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalAuth">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Вход парикмахера</h2>
+        <button class="close-btn" id="btnCloseAuth">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Введите пароль</label>
+        <input type="password" class="form-control" id="authPassword" placeholder="Пароль...">
+      </div>
+      <button class="btn-main" id="btnSubmitAuth">Войти</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalBooking">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Запись на стрижку</h2>
+        <button class="close-btn" id="btnCloseBooking">&times;</button>
+      </div>
+      <form id="bookingForm">
+        <div class="form-group">
+          <label>Выберите дату</label>
+          <input type="date" class="form-control" id="bookDate" required>
+        </div>
+        <div class="form-group">
+          <label>Время</label>
+          <input type="time" class="form-control" id="bookTime" required step="1800">
+        </div>
+        <div class="form-group">
+          <label>Имя и телефон</label>
+          <input type="text" class="form-control" id="bookClientName" placeholder="Александр (+7 900...)" required>
+        </div>
+        <div class="form-group">
+          <label>Сообщение для мастера</label>
+          <textarea class="form-control" id="bookMessage" placeholder="Пожелания к стрижке..."></textarea>
+        </div>
+        <button type="submit" class="btn-main">Отправить</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOrders">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Входящие заказы</h2>
+        <button class="close-btn" id="btnCloseOrders">&times;</button>
+      </div>
+      <div id="ordersList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalReschedule">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Перенос записи</h2>
+        <button class="close-btn" id="btnCloseReschedule">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Новая дата</label>
+        <input type="date" class="form-control" id="rescheduleDate">
+      </div>
+      <div class="form-group">
+        <label>Новое время</label>
+        <input type="time" class="form-control" id="rescheduleTime" step="1800">
+      </div>
+      <button class="btn-main" id="btnSubmitReschedule">Предложить время</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalSettings">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Настройки</h2>
+        <button class="close-btn" id="btnCloseSettings">&times;</button>
+      </div>
+      <div class="form-group">
+        <button class="btn-secondary" id="btnToggleTheme" style="width: 100%;">Сменить тему (Черная / Светлая)</button>
+      </div>
+      <div id="barberSettingsBlock" style="display:none; margin-top: 16px;">
+        <hr style="border-color: var(--border); margin-bottom: 16px;">
+        <div class="form-group">
+          <label>Время закрытия</label>
+          <input type="time" class="form-control" id="settingClosingTime" value="20:00">
+        </div>
+        <div class="form-group">
+          <label>Перерыв между клиентами (мин)</label>
+          <select class="form-control" id="settingInterval">
+            <option value="30">30 минут</option>
+            <option value="60">60 минут</option>
+          </select>
+        </div>
+        <button class="btn-main" id="btnSaveSettings">Сохранить</button>
+      </div>
+      <div style="margin-top: 20px; text-align: center;">
+        <button class="btn-secondary" id="btnResetRole" style="font-size: 0.8rem; color: var(--danger);">Сменить роль (Вы ?)</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ===== ПАРОЛЬ ПАРИКМАХЕРА ===== */
+    const SECRET_PASSWORD = "АСИМА0926";
+
+    /* ===== ИНИЦИАЛИЗАЦИЯ ПУБЛИЧНОЙ БАЗЫ ДАННЫХ FIREBASE ===== */
+    const firebaseConfig = {
+      databaseURL: "https://barber-app-demo-default-rtdb.firebaseio.com/"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    /* ===== СОСТОЯНИЕ ===== */
+    let userRole = localStorage.getItem('user_role') || null; // 'barber' или 'client'
+    let myOrderId = localStorage.getItem('my_client_order_id') || null;
+    let ordersData = {};
+    let activeRescheduleId = null;
+
+    let settings = JSON.parse(localStorage.getItem('barber_settings')) || {
+      closingTime: "20:00",
+      interval: 30
+    };
+
+    /* ===== ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ===== */
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!userRole) {
+        openModal(document.getElementById('modalRoleChoice'));
+      } else {
+        updateRoleDisplay();
+      }
+
+      // Слушаем заказы из сети в реальном времени!
+      db.ref('orders').on('value', (snapshot) => {
+        ordersData = snapshot.val() || {};
+        updateOrdersUI();
+      });
+    });
+
+    /* ===== ВЫБОР РОЛИ ===== */
+    document.getElementById('btnSelectClient').addEventListener('click', () => {
+      userRole = 'client';
+      localStorage.setItem('user_role', 'client');
+      closeModal(document.getElementById('modalRoleChoice'));
+      updateRoleDisplay();
+    });
+
+    document.getElementById('btnSelectBarber').addEventListener('click', () => {
+      closeModal(document.getElementById('modalRoleChoice'));
+      openModal(document.getElementById('modalAuth'));
+    });
+
+    document.getElementById('btnSubmitAuth').addEventListener('click', () => {
+      const pass = document.getElementById('authPassword').value.trim();
+      if (pass === SECRET_PASSWORD) {
+        userRole = 'barber';
+        localStorage.setItem('user_role', 'barber');
+        closeModal(document.getElementById('modalAuth'));
+        updateRoleDisplay();
+      } else {
+        alert('Неверный пароль!');
+      }
+    });
+
+    document.getElementById('btnResetRole').addEventListener('click', () => {
+      localStorage.removeItem('user_role');
+      userRole = null;
+      closeModal(document.getElementById('modalSettings'));
+      openModal(document.getElementById('modalRoleChoice'));
+    });
+
+    function updateRoleDisplay() {
+      const badge = document.getElementById('roleBadge');
+      if (userRole === 'barber') {
+        badge.textContent = 'Парикмахер';
+        badge.style.background = 'var(--accent)';
+        badge.style.color = 'var(--accent-text)';
+        document.getElementById('barberSettingsBlock').style.display = 'block';
+      } else {
+        badge.textContent = 'Клиент';
+        badge.style.background = 'var(--border)';
+        badge.style.color = 'var(--text)';
+        document.getElementById('barberSettingsBlock').style.display = 'none';
+      }
+    }
+
+    /* ===== РЕНДЕР И ОБНОВЛЕНИЕ ДАННЫХ ===== */
+    function updateOrdersUI() {
+      const ordersArray = Object.keys(ordersData).map(key => ({ id: key, ...ordersData[key] }));
+      
+      // 1. Обновляем счетчик для парикмахера
+      const pendingOrders = ordersArray.filter(o => o.status === 'pending');
+      const badge = document.getElementById('ordersBadge');
+      if (pendingOrders.length > 0) {
+        badge.textContent = pendingOrders.length;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+
+      // 2. Рендерим заказы в модальном окне
+      renderOrders(ordersArray);
+
+      // 3. Обновляем статус клиентского заказа
+      if (myOrderId && ordersData[myOrderId]) {
+        const myOrder = ordersData[myOrderId];
+        const banner = document.getElementById('statusBanner');
+        const text = document.getElementById('statusText');
+        const actions = document.getElementById('statusActions');
+
+        banner.classList.add('active');
+        actions.style.display = 'none';
+
+        const formattedDate = formatDate(myOrder.date, myOrder.time);
+
+        if (myOrder.status === 'pending') {
+          text.innerHTML = `Парикмахер еще не прочитал или увидел ваш заказ на <b>${formattedDate}</b>`;
+        } else if (myOrder.status === 'approved') {
+          const finalD = formatDate(myOrder.finalDate || myOrder.date, myOrder.finalTime || myOrder.time);
+          text.innerHTML = `Парикмахер одобрил заказ на <b>${finalD}</b>`;
+        } else if (myOrder.status === 'rejected') {
+          text.innerHTML = `Парикмахер отклонил запись на <b>${formattedDate}</b>`;
+        } else if (myOrder.status === 'proposed_new_time') {
+          const propD = formatDate(myOrder.proposedDate, myOrder.proposedTime);
+          text.innerHTML = `Парикмахер предлагает перенести запись на <b>${propD}</b>`;
+          actions.style.display = 'flex';
+        }
+      }
+    }
+
+    function renderOrders(ordersArray) {
+      const container = document.getElementById('ordersList');
+      container.innerHTML = '';
+
+      if (ordersArray.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color: var(--text-muted);">Заказов пока нет</p>';
+        return;
+      }
+
+      ordersArray.reverse().forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+
+        let statusStr = 'Новый';
+        if (order.status === 'approved') statusStr = 'Принят';
+        if (order.status === 'rejected') statusStr = 'Отклонен';
+        if (order.status === 'proposed_new_time') statusStr = 'Предложено время';
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+            <b>${order.clientName}</b>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">${statusStr}</span>
+          </div>
+          <div style="font-size: 0.9rem;">📅 ${formatDate(order.date, order.time)}</div>
+          ${order.message ? `<div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; margin: 8px 0; font-size: 0.85rem;">💬 ${order.message}</div>` : ''}
+          ${userRole === 'barber' && (order.status === 'pending' || order.status === 'proposed_new_time') ? `
+            <div style="display:flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+              <button class="btn-success" onclick="acceptOrder('${order.id}')">Принять</button>
+              <button class="btn-danger" onclick="rejectOrder('${order.id}')">Отклонить</button>
+              <button class="btn-secondary" onclick="openReschedule('${order.id}')">Попросить на другое время</button>
+            </div>
+          ` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ===== ОФОРМЛЕНИЕ ЗАКАЗА ===== */
+    document.getElementById('bookingForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const date = document.getElementById('bookDate').value;
+      const time = document.getElementById('bookTime').value;
+      const clientName = document.getElementById('bookClientName').value.trim();
+      const message = document.getElementById('bookMessage').value.trim();
+
+      if (time >= settings.closingTime) {
+        alert(`Салон закрыт после ${settings.closingTime}. Выберите другое время!`);
+        return;
+      }
+
+      // Проверка на занятость времени
+      const isOccupied = Object.values(ordersData).some(o => {
+        if (o.status === 'rejected') return false;
+        const checkDate = o.finalDate || o.proposedDate || o.date;
+        const checkTime = o.finalTime || o.proposedTime || o.time;
+        return checkDate === date && checkTime === time;
+      });
+
+      if (isOccupied) {
+        alert(`Время ${time} на ${date} уже занято!`);
+        return;
+      }
+
+      const newRef = db.ref('orders').push();
+      myOrderId = newRef.key;
+      localStorage.setItem('my_client_order_id', myOrderId);
+
+      newRef.set({
+        date,
+        time,
+        clientName,
+        message,
+        status: 'pending'
+      });
+
+      closeModal(document.getElementById('modalBooking'));
+      document.getElementById('bookingForm').reset();
+      alert('Заказ успешно отправлен!');
+    });
+
+    /* ===== ДЕЙСТВИЯ ПАРИКМАХЕРА ===== */
+    window.acceptOrder = function(id) {
+      db.ref('orders/' + id).update({
+        status: 'approved',
+        finalDate: ordersData[id].proposedDate || ordersData[id].date,
+        finalTime: ordersData[id].proposedTime || ordersData[id].time
+      });
+    };
+
+    window.rejectOrder = function(id) {
+      db.ref('orders/' + id).update({ status: 'rejected' });
+    };
+
+    window.openReschedule = function(id) {
+      activeRescheduleId = id;
+      openModal(document.getElementById('modalReschedule'));
+    };
+
+    document.getElementById('btnSubmitReschedule').addEventListener('click', () => {
+      const date = document.getElementById('rescheduleDate').value;
+      const time = document.getElementById('rescheduleTime').value;
+      if (!date || !time) return alert('Выберите новую дату и время!');
+
+      db.ref('orders/' + activeRescheduleId).update({
+        status: 'proposed_new_time',
+        proposedDate: date,
+        proposedTime: time
+      });
+      closeModal(document.getElementById('modalReschedule'));
+    });
+
+    /* ===== РЕАКЦИЯ КЛИЕНТА ===== */
+    document.getElementById('btnAcceptNewTime').addEventListener('click', () => {
+      if (!myOrderId) return;
+      const o = ordersData[myOrderId];
+      db.ref('orders/' + myOrderId).update({
+        status: 'approved',
+        finalDate: o.proposedDate,
+        finalTime: o.proposedTime
+      });
+    });
+
+    document.getElementById('btnDeclineNewTime').addEventListener('click', () => {
+      if (!myOrderId) return;
+      db.ref('orders/' + myOrderId).update({ status: 'rejected' });
+    });
+
+    /* ===== НАВИТАЦИЯ И КНОПКИ ===== */
+    document.getElementById('btnOrders').addEventListener('click', () => {
+      if (userRole === 'barber') {
+        openModal(document.getElementById('modalOrders'));
+      } else {
+        openModal(document.getElementById('modalAuth'));
+      }
+    });
+
+    document.getElementById('btnBookOpen').addEventListener('click', () => openModal(document.getElementById('modalBooking')));
+    document.getElementById('btnSettings').addEventListener('click', () => openModal(document.getElementById('modalSettings')));
+
+    // Сохранение настроек
+    document.getElementById('btnSaveSettings').addEventListener('click', () => {
+      settings.closingTime = document.getElementById('settingClosingTime').value;
+      settings.interval = parseInt(document.getElementById('settingInterval').value, 10);
+      localStorage.setItem('barber_settings', JSON.stringify(settings));
+      closeModal(document.getElementById('modalSettings'));
+      alert('Настройки сохранены');
+    });
+
+    // Переключение темы
+    document.getElementById('btnToggleTheme').addEventListener('click', () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    });
+
+    function formatDate(d, t) {
+      if (!d) return '';
+      const [y, m, day] = d.split('-');
+      const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+      return `${t}, ${parseInt(day)} ${months[parseInt(m)-1]} ${y} года`;
+    }
+
+    function openModal(m) { m.classList.add('open'); }
+    function closeModal(m) { m.classList.remove('open'); }
+
+    document.querySelectorAll('.close-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal-overlay')));
+    });
+
+    document.getElementById('bookDate').min = new Date().toISOString().split('T')[0];
+  </script>
+</body>
+</html>
