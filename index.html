@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💈 BarberShop — Запись к мастеру</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Экран верификации парикмахера -->
+    <div id="barberAuthOverlay" class="overlay hidden">
+        <div class="auth-card animate-in">
+            <div class="auth-icon">🔐</div>
+            <h2>Вход для мастера</h2>
+            <p>Введите секретный пароль</p>
+            <input type="password" id="barberPassword" placeholder="Пароль..." autocomplete="off">
+            <button id="barberLoginBtn" class="btn-primary">Войти</button>
+            <button id="barberAuthClose" class="btn-ghost">Отмена</button>
+            <div id="authError" class="error-msg hidden">Неверный пароль!</div>
+        </div>
+    </div>
+
+    <!-- Модальное окно записи -->
+    <div id="bookingOverlay" class="overlay hidden">
+        <div class="booking-card animate-in">
+            <button id="closeBooking" class="close-btn"><i class="fas fa-times"></i></button>
+            <h2>📋 Запись на стрижку</h2>
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" id="clientName" placeholder="Как вас зовут?">
+            </div>
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="tel" id="clientPhone" placeholder="+7 (___) ___-__-__">
+            </div>
+            <div class="form-group">
+                <label>Дата</label>
+                <input type="date" id="bookingDate">
+            </div>
+            <div class="form-group">
+                <label>Время</label>
+                <input type="time" id="bookingTime">
+            </div>
+            <div class="form-group">
+                <label>Сообщение мастеру</label>
+                <textarea id="clientMessage" placeholder="Напишите пожелания по стрижке..."></textarea>
+            </div>
+            <button id="submitBooking" class="btn-primary btn-full">
+                <i class="fas fa-paper-plane"></i> Отправить заявку
+            </button>
+            <div id="bookingError" class="error-msg hidden"></div>
+        </div>
+    </div>
+
+    <!-- Модальное окно заказов парикмахера -->
+    <div id="ordersOverlay" class="overlay hidden">
+        <div class="orders-card animate-in">
+            <button id="closeOrders" class="close-btn"><i class="fas fa-times"></i></button>
+            <h2>📬 Заказы</h2>
+            <div id="ordersList" class="orders-list">
+                <p class="empty-msg">Нет новых заказов</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div id="settingsOverlay" class="overlay hidden">
+        <div class="settings-card animate-in">
+            <button id="closeSettings" class="close-btn"><i class="fas fa-times"></i></button>
+            <h2>⚙️ Настройки</h2>
+
+            <div class="setting-item">
+                <label>🎨 Тема оформления</label>
+                <div class="toggle-group">
+                    <button id="themeLight" class="toggle-btn active">☀️ Светлая</button>
+                    <button id="themeDark" class="toggle-btn">🌙 Тёмная</button>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label>⏱ Перерыв между записями (мин)</label>
+                <input type="number" id="breakTime" value="30" min="10" max="120" step="5">
+            </div>
+
+            <div class="setting-item">
+                <label>🕐 Время открытия</label>
+                <input type="time" id="openTime" value="09:00">
+            </div>
+
+            <div class="setting-item">
+                <label>🕕 Время закрытия</label>
+                <input type="time" id="closeTime" value="20:00">
+            </div>
+
+            <div class="setting-item">
+                <label>🔑 Изменить пароль мастера</label>
+                <input type="text" id="newPassword" placeholder="Новый пароль">
+            </div>
+
+            <button id="saveSettings" class="btn-primary btn-full">
+                <i class="fas fa-save"></i> Сохранить настройки
+            </button>
+        </div>
+    </div>
+
+    <!-- Модальное окно переноса времени -->
+    <div id="rescheduleOverlay" class="overlay hidden">
+        <div class="reschedule-card animate-in">
+            <button id="closeReschedule" class="close-btn"><i class="fas fa-times"></i></button>
+            <h2>🔄 Предложить другое время</h2>
+            <div class="form-group">
+                <label>Новая дата</label>
+                <input type="date" id="newDate">
+            </div>
+            <div class="form-group">
+                <label>Новое время</label>
+                <input type="time" id="newTime">
+            </div>
+            <button id="submitReschedule" class="btn-primary btn-full">Отправить</button>
+            <input type="hidden" id="rescheduleOrderId">
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header id="mainHeader">
+        <div class="header-left">
+            <button id="settingsBtn" class="icon-btn hidden" title="Настройки">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+        <div class="header-center">
+            <span class="logo">💈 BARBERSHOP</span>
+        </div>
+        <div class="header-right">
+            <button id="ordersBtn" class="icon-btn hidden" title="Заказы">
+                <i class="fas fa-envelope"></i>
+                <span id="ordersBadge" class="badge hidden">0</span>
+            </button>
+            <button id="barberAccessBtn" class="icon-btn" title="Вход для мастера">
+                <i class="fas fa-user-lock"></i>
+            </button>
+            <button id="barberLogoutBtn" class="icon-btn hidden" title="Выйти">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <main>
+        <section class="hero">
+            <div class="hero-particles" id="particles"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="line1">Стильная</span>
+                    <span class="line2">Стрижка</span>
+                </h1>
+                <div class="price-tag">
+                    <span class="price-amount">500 ₽</span>
+                </div>
+                <p class="hero-desc">Профессиональная мужская стрижка от опытного мастера. Индивидуальный подход к каждому клиенту.</p>
+                <button id="bookBtn" class="btn-book">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Записаться</span>
+                </button>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card card-1">✂️</div>
+                <div class="floating-card card-2">💈</div>
+                <div class="floating-card card-3">⭐</div>
+            </div>
+        </section>
+
+        <!-- Уведомления для клиента -->
+        <div id="clientNotifications" class="notifications-area"></div>
+
+        <!-- Секция отзывов -->
+        <section class="reviews-section">
+            <h2 class="section-title">Отзывы клиентов</h2>
+            <div class="reviews-track">
+                <div class="review-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>«Отличная стрижка! Мастер очень внимательный и аккуратный.»</p>
+                    <span class="reviewer">— Алексей</span>
+                </div>
+                <div class="review-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>«Хожу сюда уже полгода. Всегда доволен результатом!»</p>
+                    <span class="reviewer">— Дмитрий</span>
+                </div>
+                <div class="review-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>«Приятная атмосфера и профессиональный подход. Рекомендую!»</p>
+                    <span class="reviewer">— Максим</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast уведомления -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
